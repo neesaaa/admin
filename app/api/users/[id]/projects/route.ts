@@ -1,0 +1,102 @@
+import { NextResponse } from "next/server"
+
+// Mock data for API demonstration
+const userProjects = {
+  "1": [
+    {
+      id: 1,
+      userName: "Olivia Martin",
+      projectName: "E-commerce Platform",
+      datetime: "2 days ago",
+      status: "Active",
+      staticDynamic: "Dynamic",
+      link: "https://ecommerce-platform.astrcloud.com",
+    },
+    {
+      id: 2,
+      userName: "Olivia Martin",
+      projectName: "Marketing Website",
+      datetime: "5 days ago",
+      status: "Active",
+      staticDynamic: "Static",
+      link: "https://marketing-website.astrcloud.com",
+    },
+    {
+      id: 3,
+      userName: "Olivia Martin",
+      projectName: "Analytics Dashboard",
+      datetime: "1 week ago",
+      status: "Active",
+      staticDynamic: "Dynamic",
+      link: "https://analytics-dashboard.astrcloud.com",
+    },
+  ],
+  "2": [
+    {
+      id: 4,
+      userName: "Jackson Lee",
+      projectName: "Payment Gateway",
+      datetime: "2 weeks ago",
+      status: "Active",
+      staticDynamic: "Dynamic",
+      link: "https://payment-gateway.astrcloud.com",
+    },
+    {
+      id: 5,
+      userName: "Jackson Lee",
+      projectName: "Customer Portal",
+      datetime: "3 weeks ago",
+      status: "Active",
+      staticDynamic: "Dynamic",
+      link: "https://customer-portal.astrcloud.com",
+    },
+  ],
+  "3": [
+    {
+      id: 6,
+      userName: "Isabella Nguyen",
+      projectName: "Blog Platform",
+      datetime: "1 month ago",
+      status: "Active",
+      staticDynamic: "Static",
+      link: "https://blog-platform.astrcloud.com",
+    },
+  ],
+  "4": [
+    {
+      id: 7,
+      userName: "William Kim",
+      projectName: "Admin Dashboard",
+      datetime: "2 months ago",
+      status: "Active",
+      staticDynamic: "Dynamic",
+      link: "https://admin-dashboard.astrcloud.com",
+    },
+    {
+      id: 8,
+      userName: "William Kim",
+      projectName: "Mobile App Backend",
+      datetime: "3 months ago",
+      status: "Active",
+      staticDynamic: "Dynamic",
+      link: "https://mobile-backend.astrcloud.com",
+    },
+  ],
+}
+
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 500))
+
+  const userId = params.id
+  const projects = userProjects[userId]
+
+  if (!projects) {
+    return new NextResponse(JSON.stringify({ error: "Projects not found for this user" }), {
+      status: 404,
+      headers: { "Content-Type": "application/json" },
+    })
+  }
+
+  return NextResponse.json(projects)
+}

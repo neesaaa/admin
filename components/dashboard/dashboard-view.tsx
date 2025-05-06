@@ -9,6 +9,7 @@ import { RecentActivity } from "@/components/dashboard/recent-activity"
 import { UsersSection } from "@/components/dashboard/users-section"
 
 export function DashboardView() {
+  const [timeRange, setTimeRange] = useState("Daily")
 
   return (
     <PageLayout>
@@ -17,7 +18,7 @@ export function DashboardView() {
         description="Manage your platform users, projects, and monitor system activity."
       />
 
-      <DashboardStats/>
+      <DashboardStats timeRange={timeRange} onTimeRangeChange={setTimeRange} />
       <SystemUsage className="mb-4" />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

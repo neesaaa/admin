@@ -3,9 +3,9 @@
 import type React from "react"
 
 import { useAuth } from "@/components/auth/auth-context"
-import { Loader2 } from "lucide-react"
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useEffect } from "react"
+import { Loader2 } from "lucide-react"
 
 interface ProtectedRouteProps {
   children: React.ReactNode

@@ -1,8 +1,8 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { ResourceChart } from "@/components/ui/resource-chart"
 import { SectionContainer } from "@/components/ui/section-container"
-import { useEffect, useState } from "react"
 
 interface SystemUsageProps {
   className?: string
@@ -27,7 +27,6 @@ export function SystemUsage({ className = "" }: SystemUsageProps) {
   ]
 
   return (
-    <>
     <SectionContainer
       title="System Usage"
       description="Resource utilization across your platform"
@@ -39,6 +38,5 @@ export function SystemUsage({ className = "" }: SystemUsageProps) {
         <div className="h-[200px] flex items-center justify-center bg-white rounded-lg">Loading chart...</div>
       )}
     </SectionContainer>
-    </>
   )
 }

@@ -1,4 +1,5 @@
-import { RefreshCw, Trash2, MoreHorizontal, ChevronRight } from "lucide-react"
+import { ChevronRight, MoreHorizontal, RefreshCw, Trash2 } from "lucide-react"
+import Link from "next/link"
 
 interface ProjectListItemProps {
   userName: string
@@ -7,6 +8,7 @@ interface ProjectListItemProps {
   status: string
   staticDynamic: string
   link: string
+  id?: number
 }
 
 export function ProjectListItem({
@@ -16,12 +18,13 @@ export function ProjectListItem({
   status,
   staticDynamic,
   link,
+  id = 1,
 }: ProjectListItemProps) {
   return (
     <div className="rounded-lg bg-[#0a2a3f] p-4 text-white">
       <div className="flex flex-col lg:flex-row lg:items-center">
         {/* User/Project info - always visible */}
-        <div className="flex items-center mb-4 sm:mb-0 sm:w-[220px]">
+        <div className="flex items-center mb-4 lg:mb-0 lg:w-[220px]">
           <div className="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
             <span className="text-base font-medium text-gray-700">{userName.charAt(0).toUpperCase()}</span>
           </div>
@@ -54,7 +57,7 @@ export function ProjectListItem({
         {/* Desktop view - horizontal layout */}
         <div className="hidden lg:grid lg:grid-cols-5 lg:flex-1 lg:items-center">
           {/* Date column - fixed width and right aligned */}
-          <div className="text-right pr-8">{datetime}</div>
+          <div className="text-right pr-6">{datetime}</div>
 
           {/* Link column */}
           <div className="text-center">
@@ -75,14 +78,16 @@ export function ProjectListItem({
               <RefreshCw className="h-4 w-4" />
             </button>
             <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300">
-              <Trash2 color="#6b0000" className="h-4 w-4" />
+              <Trash2 className="h-4 w-4" color="#8B0000" />
             </button>
             <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300">
               <MoreHorizontal className="h-4 w-4" />
             </button>
-            <button className="ml-2 rounded-lg bg-transparent p-2 text-white hover:bg-[#1a3a4f]">
-              <ChevronRight className="h-4 w-4" />
-            </button>
+            <Link href={`/pages/projects/${id}`} passHref>
+              <button className="ml-2 rounded-lg bg-transparent p-2 text-white hover:bg-[#1a3a4f]">
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -92,14 +97,16 @@ export function ProjectListItem({
             <RefreshCw className="h-4 w-4" />
           </button>
           <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300 mr-2">
-            <Trash2 color="#6b0000" className="h-4 w-4" />
+            <Trash2 className="h-4 w-4" color="#8B0000"/>
           </button>
           <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300 mr-2">
             <MoreHorizontal className="h-4 w-4" />
           </button>
-          <button className="rounded-lg bg-transparent p-2 text-white hover:bg-[#1a3a4f]">
-            <ChevronRight className="h-4 w-4" />
-          </button>
+          <Link href={`/pages/projects/${id}`} passHref>
+            <button className="rounded-lg bg-transparent p-2 text-white hover:bg-[#1a3a4f]">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </Link>
         </div>
       </div>
     </div>

@@ -3,70 +3,48 @@
 import { PageHeader } from "@/components/ui/page-header"
 import { Pagination } from "@/components/ui/pagination"
 import { ProjectListItem } from "@/components/ui/project-list-item"
-import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
+import { getProjects } from "@/lib/api-client"
+import { useQuery } from "@tanstack/react-query"
 import { ChevronDown, Search } from "lucide-react"
-import { useMemo, useState } from "react"
-
-// Extend dayjs with relativeTime plugin
-dayjs.extend(relativeTime)
-
-// Generate 23 fake projects programmatically
-const FAKE_PROJECTS = Array.from({ length: 100 }, (_, i) => {
-  const id = i + 1
-  const projectNames = [
-    "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta",
-    "Theta", "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi",
-    "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon",
-    "Phi", "Chi", "Psi"
-  ]
-  const statuses = ["Published", "Draft", "Archived"]
-  const types = ["Static", "Dynamic"]
-  return {
-    id,
-    userName: `User${id}`,
-    projectName: projectNames[i] || `Project${id}`,
-    datetime: dayjs().subtract(id, "day").toISOString(),
-    link: `https://example.com/${projectNames[i]?.toLowerCase() || `project${id}`}`,
-    status: statuses[i % statuses.length],
-    staticDynamic: types[i % types.length]
-  }
-})
+import { useEffect, useState } from "react"
 
 export function ProjectsList() {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("Last published")
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 7 // Number of projects per page
 
-  // Filter projects based on search query
-  const filteredProjects = useMemo(
-    () => FAKE_PROJECTS.filter((project) =>
-      project.projectName.toLowerCase().includes(searchQuery.toLowerCase())
-    ),
-    [searchQuery]
+  // Dynamically set items per page: 4 if viewport ≤640px, else 7
+  const [itemsPerPage, setItemsPerPage] = useState(() =>
+    typeof window !== "undefined" && window.innerWidth <= 640 ? 3 : 7
   )
 
-  // Sort projects (only "Last published" for now)
-  const sortedProjects = useMemo(() => {
-    if (sortBy === "Last published") {
-      return [...filteredProjects].sort(
-        (a, b) => new Date(b.datetime) - new Date(a.datetime)
-      )
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)")
+    const onChange = (e: MediaQueryListEvent) => {
+      setItemsPerPage(e.matches ? 3: 7)
+      setCurrentPage(1) // optional: reset to first page when layout changes
     }
-    return filteredProjects
-  }, [filteredProjects, sortBy])
+    mq.addEventListener("change", onChange)
+    return () => mq.removeEventListener("change", onChange)
+  }, [])
 
-  // Calculate pagination
-  const totalPages = Math.max(1, Math.ceil(sortedProjects.length / itemsPerPage))
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = sortedProjects.slice(indexOfFirstItem, indexOfLastItem)
+  // Fetch projects
+  const {
+    data: projects = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["projects"],
+    queryFn: getProjects,
+  })
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value)
-    setCurrentPage(1)
-  }
+  // Filter and paginate
+  const filtered = projects.filter((p) =>
+    p.projectName.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+  const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage))
+  const start = (currentPage - 1) * itemsPerPage
+  const currentItems = filtered.slice(start, start + itemsPerPage)
 
   return (
     <>
@@ -88,40 +66,58 @@ export function ProjectsList() {
               placeholder="search by project name"
               className="w-full rounded-lg bg-white py-2 pl-10 pr-4 text-sm"
               value={searchQuery}
-              onChange={handleSearchChange}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setCurrentPage(1)
+              }}
             />
           </div>
         </div>
       </div>
 
-
-      <div className="space-y-4">
-        {currentItems.length > 0 ? (
-          currentItems.map((project) => (
-            <ProjectListItem
-              key={project.id}
-              userName={project.userName}
-              projectName={project.projectName}
-              datetime={dayjs(project.datetime).fromNow()}
-              status={project.status}
-              staticDynamic={project.staticDynamic}
-              link={project.link}
-            />
-          ))
-        ) : (
-          <div className="bg-[#0a2a3f] rounded-lg p-8 text-white text-center">
-            {searchQuery
-              ? "No projects found matching your search."
-              : "No projects to display."}
-          </div>
-        )}
-      </div>
-
-      {/* Pagination with bottom margin for spacing */}
-      {sortedProjects.length > 0 && (
-        <div className="mt-6 mb-4">
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+      {isLoading ? (
+        <div className="bg-[#0a2a3f] rounded-lg p-8 text-white text-center">
+          Loading projects...
         </div>
+      ) : error ? (
+        <div className="bg-[#0a2a3f] rounded-lg p-8 text-white text-center">
+          <p className="text-red-400 mb-2">Error loading projects</p>
+          <p className="text-sm">
+            {error instanceof Error ? error.message : "Unknown error"}
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-4">
+            {currentItems.length > 0 ? (
+              currentItems.map((project) => (
+                <ProjectListItem
+                  key={project.id}
+                  userName={project.userName}
+                  projectName={project.projectName}
+                  datetime={project.datetime}
+                  status={project.status}
+                  staticDynamic={project.staticDynamic}
+                  link={project.link}
+                />
+              ))
+            ) : (
+              <div className="bg-[#0a2a3f] rounded-lg p-8 text-white text-center">
+                No projects found matching your search.
+              </div>
+            )}
+          </div>
+
+          {filtered.length > 0 && (
+            <div className="mt-6 mb-4">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
+        </>
       )}
     </>
   )

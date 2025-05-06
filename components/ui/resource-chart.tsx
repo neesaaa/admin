@@ -28,19 +28,19 @@ export function ResourceChart({ data, height = 300, className = "" }: ResourceCh
   return (
     <div className={`rounded-lg bg-white p-4 ${className}`} style={{ height: heightValue }}>
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data}>
+        <LineChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-          <XAxis dataKey="name" />
-          <YAxis domain={[0, 100]} />
-          <Tooltip />
-          <Legend />
+          <XAxis dataKey="name" tick={{ fontSize: isMobile ? 10 : 12 }} />
+          <YAxis domain={[0, 100]} tick={{ fontSize: isMobile ? 10 : 12 }} />
+          <Tooltip contentStyle={{ fontSize: isMobile ? 10 : 12 }} />
+          <Legend wrapperStyle={{ fontSize: isMobile ? 10 : 12 }} />
           <Line
             type="monotone"
             dataKey="cpu"
             stroke="#8884d8"
             strokeWidth={2}
-            dot={{ r: 4 }}
-            activeDot={{ r: 6 }}
+            dot={{ r: isMobile ? 2 : 4 }}
+            activeDot={{ r: isMobile ? 4 : 6 }}
             name="CPU"
           />
           <Line
@@ -48,8 +48,8 @@ export function ResourceChart({ data, height = 300, className = "" }: ResourceCh
             dataKey="memory"
             stroke="#82ca9d"
             strokeWidth={2}
-            dot={{ r: 4 }}
-            activeDot={{ r: 6 }}
+            dot={{ r: isMobile ? 2 : 4 }}
+            activeDot={{ r: isMobile ? 4 : 6 }}
             name="Memory"
           />
           {!isMobile && (

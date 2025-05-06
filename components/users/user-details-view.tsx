@@ -2,74 +2,51 @@
 
 import { PageLayout } from "@/components/layout/page-layout"
 import { PageHeader } from "@/components/ui/page-header"
-import { ProjectListItem } from "@/components/ui/project-list-item"
 import { SectionContainer } from "@/components/ui/section-container"
-import { Activity, ArrowLeft, Calendar, Mail } from "lucide-react"
+import { ProjectListItem } from "@/components/ui/project-list-item"
+import { ArrowLeft, Mail, Calendar, Activity } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { getUserById } from "@/lib/api-client"
 
 interface UserDetailsViewProps {
   userId: string
 }
 
 export function UserDetailsView({ userId }: UserDetailsViewProps) {
-  const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<any>(null)
+  // Fetch user details with React Query
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => getUserById(userId),
+  })
 
-  useEffect(() => {
-    // Simulate API fetch
-    const fetchUser = async () => {
-      // In a real app, fetch from API based on userId
-      setLoading(true)
-
-      // Mock data
-      const mockUser = {
-        id: Number.parseInt(userId),
-        name: ["Olivia Martin", "Jackson Lee", "Isabella Nguyen", "William Kim"][Number.parseInt(userId) - 1] || "User",
-        email: `user${userId}@example.com`,
-        status: "Active",
-        joinDate: "Jan 12, 2023",
-        lastActive: "Today, 2:30 PM",
-        projects: [
-          {
-            id: 1,
-            projectName: "E-commerce Platform",
-            datetime: "2 days ago",
-            status: "Active",
-            staticDynamic: "Dynamic",
-            link: "https://ecommerce-platform.astrcloud.com",
-          },
-          {
-            id: 2,
-            projectName: "Marketing Website",
-            datetime: "5 days ago",
-            status: "Active",
-            staticDynamic: "Static",
-            link: "https://marketing-website.astrcloud.com",
-          },
-          {
-            id: 3,
-            projectName: "Analytics Dashboard",
-            datetime: "1 week ago",
-            status: "Active",
-            staticDynamic: "Dynamic",
-            link: "https://analytics-dashboard.astrcloud.com",
-          },
-        ].slice(0, (Number.parseInt(userId) % 3) + 1), // Different number of projects per user
-      }
-
-      setUser(mockUser)
-      setLoading(false)
-    }
-
-    fetchUser()
-  }, [userId])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <PageLayout>
         <div className="flex items-center justify-center h-full">
           <div className="text-lg">Loading user details...</div>
+        </div>
+      </PageLayout>
+    )
+  }
+
+  if (error || !user) {
+    return (
+      <PageLayout>
+        <div className="mb-4">
+          <Link href="/pages/users" className="flex items-center text-sm text-blue-600 hover:text-blue-800">
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back to Users
+          </Link>
+        </div>
+
+        <div className="bg-[#0a2a3f] rounded-lg p-8 text-white text-center">
+          <p className="text-red-400 mb-2">Error loading user details</p>
+          <p className="text-sm">{error instanceof Error ? error.message : "Unknown error"}</p>
         </div>
       </PageLayout>
     )
@@ -119,17 +96,16 @@ export function UserDetailsView({ userId }: UserDetailsViewProps) {
                 <div>{user.lastActive}</div>
               </div>
 
-                <div className="bg-[#1a3a4f] p-3 rounded-lg">
-                  <div className="text-gray-300 text-sm mb-1">Status</div>
-                  <div className="flex items-center">
-                    <div
-                      className={`h-2 w-2 rounded-full mr-2 ${
-                        user.status === 'Active' ? 'bg-green-500' : 'bg-yellow-500'
-                      }`}
-                    ></div>
-                    {user.status}
-                  </div>
+              <div className="bg-[#1a3a4f] p-3 rounded-lg">
+                <div className="text-gray-300 text-sm mb-1">Status</div>
+                <div className="flex items-center">
+                  <div
+                    className={`h-2 w-2 rounded-full ${user.status === "Active" ? "bg-green-500" : "bg-red-500"} mr-2`}
+                  ></div>
+                  {user.status}
+                </div>
               </div>
+
               <div className="bg-[#1a3a4f] p-3 rounded-lg">
                 <div className="text-gray-300 text-sm mb-1">Projects</div>
                 <div className="flex items-center">
@@ -154,7 +130,7 @@ export function UserDetailsView({ userId }: UserDetailsViewProps) {
       <SectionContainer title="User Projects" description={`Projects created by ${user.name}`}>
         <div className="space-y-4">
           {user.projects.length > 0 ? (
-            user.projects.map((project: any) => (
+            user.projects.map((project) => (
               <ProjectListItem
                 key={project.id}
                 userName={user.name}
