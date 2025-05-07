@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 const projectsDetails = {
   "1": {
     id: 1,
-    userName: "Olivia Martin",
+    userName: "Tom Tom Tom sahoor",
     projectName: "E-commerce Platform",
     datetime: "2 days ago",
     status: "Active",
@@ -16,7 +16,7 @@ const projectsDetails = {
   },
   "2": {
     id: 2,
-    userName: "Olivia Martin",
+    userName: "Tom Tom Tom sahoor",
     projectName: "Marketing Website",
     datetime: "5 days ago",
     status: "Active",
@@ -28,7 +28,7 @@ const projectsDetails = {
   },
   "3": {
     id: 3,
-    userName: "Olivia Martin",
+    userName: "Tom Tom Tom sahoor",
     projectName: "Analytics Dashboard",
     datetime: "1 week ago",
     status: "Active",
