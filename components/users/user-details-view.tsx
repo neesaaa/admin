@@ -72,10 +72,6 @@ export function UserDetailsView({ userId }: UserDetailsViewProps) {
               </div>
               <div className="ml-4">
                 <h3 className="text-xl font-bold">{user.name}</h3>
-                <div className="flex items-center text-gray-300 mt-1">
-                  <Mail className="h-4 w-4 mr-1" />
-                  <span>{user.email}</span>
-                </div>
               </div>
             </div>
 
