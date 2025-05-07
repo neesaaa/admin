@@ -1,15 +1,15 @@
 "use client"
 
-import { useState } from "react"
 import { PageLayout } from "@/components/layout/page-layout"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ProjectDeployments } from "@/components/projects/project-deployments"
 import { ProjectLogs } from "@/components/projects/project-logs"
 import { ProjectSettings } from "@/components/projects/project-settings"
-import { useQuery } from "@tanstack/react-query"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getProjectById } from "@/lib/api-client"
+import { useQuery } from "@tanstack/react-query"
 import { ArrowLeft, RefreshCw, Trash2 } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 
 interface ProjectDetailViewProps {
   projectId: string
@@ -95,7 +95,7 @@ export function ProjectDetailView({ projectId }: ProjectDetailViewProps) {
               <span>Rebuild</span>
             </button>
             <button className="flex items-center gap-1 bg-red-700 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm">
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-4 w-4" color="white" />
               <span>Delete</span>
             </button>
           </div>

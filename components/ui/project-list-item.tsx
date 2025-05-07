@@ -77,8 +77,8 @@ export function ProjectListItem({
             <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300">
               <RefreshCw className="h-4 w-4" />
             </button>
-            <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300">
-              <Trash2 className="h-4 w-4" color="#8B0000" />
+            <button className="rounded-lg bg-red-900 p-2 text-[#0a2a3f] hover:bg-gray-300">
+              <Trash2 className="h-4 w-4" color="white" />
             </button>
             <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300">
               <MoreHorizontal className="h-4 w-4" />
@@ -96,8 +96,8 @@ export function ProjectListItem({
           <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300 mr-2">
             <RefreshCw className="h-4 w-4" />
           </button>
-          <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300 mr-2">
-            <Trash2 className="h-4 w-4" color="#8B0000"/>
+          <button className="rounded-lg bg-red-900 p-2 text-[#0a2a3f] hover:bg-gray-300 mr-2">
+            <Trash2 className="h-4 w-4" color="white"/>
           </button>
           <button className="rounded-lg bg-[#a7bbc7] p-2 text-[#0a2a3f] hover:bg-gray-300 mr-2">
             <MoreHorizontal className="h-4 w-4" />

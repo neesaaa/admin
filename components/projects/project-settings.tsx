@@ -1,20 +1,21 @@
 "use client"
 
-import { useState } from "react"
 import type { Project } from "@/lib/api-client"
 import {
   AlertCircle,
-  Save,
-  Plus,
-  Trash2,
-  Link,
-  Server,
+  ChevronDown,
   FileCode,
-  GitBranch,
-  Terminal,
   FolderOutput,
+  GitBranch,
   Key,
+  Link,
+  Plus,
+  Save,
+  Server,
+  Terminal,
+  Trash2
 } from "lucide-react"
+import { useState } from "react"
 
 interface ProjectSettingsProps {
   project: Project
@@ -22,27 +23,23 @@ interface ProjectSettingsProps {
 
 export function ProjectSettings({ project }: ProjectSettingsProps) {
   const [domain, setDomain] = useState(project.link.replace("https://", ""))
-  const [projectType, setProjectType] = useState<"static" | "dynamic">(
-    project.staticDynamic.toLowerCase() as "static" | "dynamic",
-  )
   const [branch, setBranch] = useState("main")
   const [rootDirectory, setRootDirectory] = useState("")
   const [buildCommand, setBuildCommand] = useState("npm run build")
   const [outputDirectory, setOutputDirectory] = useState("dist")
   const [startCommand, setStartCommand] = useState("npm start")
   const [language, setLanguage] = useState("Node")
-  const [version, setVersion] = useState("18.x")
+  const [version, setVersion] = useState("22")
   const [secretFiles, setSecretFiles] = useState<string[]>([])
   const [healthCheckPath, setHealthCheckPath] = useState("/health")
   const [environmentVariables, setEnvironmentVariables] = useState<{ key: string; value: string; isSecret: boolean }[]>(
-    [
-      { key: "NODE_ENV", value: "production", isSecret: false },
-      { key: "API_URL", value: "https://api.example.com", isSecret: false },
-      { key: "DATABASE_URL", value: "postgresql://user:password@localhost:5432/db", isSecret: true },
-    ],
+    [{ key: "NODE_ENV", value: "production", isSecret: false }],
   )
   const [isSaving, setIsSaving] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
+
+  // Determine if project is static or dynamic
+  const isStatic = project.staticDynamic.toLowerCase() === "static"
 
   const handleAddEnvironmentVariable = () => {
     setEnvironmentVariables([...environmentVariables, { key: "", value: "", isSecret: false }])
@@ -119,7 +116,7 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
                   onChange={(e) => setDomain(e.target.value)}
                 />
               </div>
-              <p className="text-xs text-gray-400 mt-1">How the desired URL for your website</p>
+              <p className="text-xs text-gray-400 mt-1">The desired URL for your website</p>
             </div>
           </div>
         </div>
@@ -133,42 +130,6 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
         </div>
         <div className="p-4 text-white">
           <div className="space-y-6">
-            {/* Project Type Selection */}
-            <div>
-              <label className="block text-sm font-medium mb-2 text-gray-300">Project Type</label>
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="projectType"
-                    checked={projectType === "static"}
-                    onChange={() => setProjectType("static")}
-                    className="mr-2 h-4 w-4 text-blue-600"
-                  />
-                  <div
-                    className={`flex items-center justify-center w-6 h-6 rounded-full ${projectType === "static" ? "bg-green-500" : "bg-gray-600"} mr-2`}
-                  >
-                    <div className="w-3 h-3 rounded-full bg-white"></div>
-                  </div>
-                  <span>Static</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="projectType"
-                    checked={projectType === "dynamic"}
-                    onChange={() => setProjectType("dynamic")}
-                    className="mr-2 h-4 w-4 text-blue-600"
-                  />
-                  <div
-                    className={`flex items-center justify-center w-6 h-6 rounded-full ${projectType === "dynamic" ? "bg-green-500" : "bg-gray-600"} mr-2`}
-                  >
-                    <div className="w-3 h-3 rounded-full bg-white"></div>
-                  </div>
-                  <span>Dynamic</span>
-                </label>
-              </div>
-            </div>
 
             {/* Branch */}
             <div>
@@ -186,40 +147,51 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
             </div>
 
             {/* Dynamic-specific fields */}
-            {projectType === "dynamic" && (
+            {!isStatic && (
               <>
                 <div>
                   <label htmlFor="language" className="block text-sm font-medium mb-1 text-gray-300">
                     Language
                   </label>
-                  <select
-                    id="language"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                  >
-                    <option value="Node">Node</option>
-                    <option value="Python">Python</option>
-                    <option value="Ruby">Ruby</option>
-                    <option value="PHP">PHP</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      id="language"
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white appearance-none"
+                      value={language}
+                      onChange={(e) => setLanguage(e.target.value)}
+                    >
+                      <option value="Node">Node</option>
+                      <option value="Python">Python</option>
+                      <option value="Ruby">Ruby</option>
+                      <option value="PHP">PHP</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </div>
                 </div>
 
                 <div>
                   <label htmlFor="version" className="block text-sm font-medium mb-1 text-gray-300">
                     Version
                   </label>
-                  <select
-                    id="version"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
-                    value={version}
-                    onChange={(e) => setVersion(e.target.value)}
-                  >
-                    <option value="18.x">18.x</option>
-                    <option value="16.x">16.x</option>
-                    <option value="14.x">14.x</option>
-                    <option value="12.x">12.x</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      id="version"
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white appearance-none"
+                      value={version}
+                      onChange={(e) => setVersion(e.target.value)}
+                    >
+                      <option value="22">22</option>
+                      <option value="20">20</option>
+                      <option value="18.x">18.x</option>
+                      <option value="16.x">16.x</option>
+                      <option value="14.x">14.x</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </div>
                 </div>
 
                 <div>
@@ -277,7 +249,7 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
                 value={buildCommand}
                 onChange={(e) => setBuildCommand(e.target.value)}
               />
-              <p className="text-xs text-gray-400 mt-1">Example: yarn build, gulp build, make all</p>
+              <p className="text-xs text-gray-400 mt-1">Examples: jekyll build, gulp build, make all</p>
             </div>
 
             <div>
@@ -314,7 +286,7 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
         </div>
         <div className="p-4 text-white">
           <div className="mb-4 p-3 bg-blue-900/30 border border-blue-800 rounded-md flex items-start">
-            <AlertCircle className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-blue-200">
               Environment variables are encrypted and only exposed to your project during build and runtime.
             </div>
@@ -322,39 +294,62 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
 
           <div className="space-y-3">
             {environmentVariables.map((variable, index) => (
-              <div key={index} className="flex gap-2 items-center">
-                <input
-                  type="text"
-                  placeholder="KEY"
-                  className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
-                  value={variable.key}
-                  onChange={(e) => handleEnvironmentVariableChange(index, "key", e.target.value)}
-                />
-                <input
-                  type={variable.isSecret ? "password" : "text"}
-                  placeholder="VALUE"
-                  className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
-                  value={variable.value}
-                  onChange={(e) => handleEnvironmentVariableChange(index, "value", e.target.value)}
-                />
-                <div className="flex items-center">
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={variable.isSecret}
-                      onChange={(e) => handleEnvironmentVariableChange(index, "isSecret", e.target.checked)}
-                      className="sr-only peer"
-                    />
-                    <div className="relative w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    <span className="ms-3 text-sm font-medium text-gray-300">Secret</span>
-                  </label>
+              <div key={index} className="flex flex-col sm:flex-row gap-2">
+                <div className="w-full sm:w-1/2 flex items-center">
+                  <span className="text-sm text-gray-400 mr-2">Key</span>
+                  <input
+                    type="text"
+                    placeholder="variable_name"
+                    className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
+                    value={variable.key}
+                    onChange={(e) => handleEnvironmentVariableChange(index, "key", e.target.value)}
+                  />
                 </div>
-                <button
-                  onClick={() => handleRemoveEnvironmentVariable(index)}
-                  className="p-2 bg-red-900 hover:bg-red-800 text-white rounded-md"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                <div className="w-full sm:w-1/2 flex items-center">
+                  <span className="text-sm text-gray-400 mr-2">Value</span>
+                  <div className="flex-1 relative">
+                    <input
+                      type={variable.isSecret ? "password" : "text"}
+                      placeholder="variable_value"
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white pr-8"
+                      value={variable.value}
+                      onChange={(e) => handleEnvironmentVariableChange(index, "value", e.target.value)}
+                    />
+                    <button
+                      onClick={() => handleEnvironmentVariableChange(index, "isSecret", !variable.isSecret)}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d={
+                            variable.isSecret
+                              ? "M3 3l18 18M10.5 10.677a2 2 0 002.823 2.823"
+                              : "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                          }
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        {!variable.isSecret && (
+                          <path
+                            d="M12 12m-3 0a3 3 0 106 0a3 3 0 10-6 0"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        )}
+                      </svg>
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveEnvironmentVariable(index)}
+                    className="ml-2 p-2 bg-red-900 hover:bg-red-800 text-white rounded-md"
+                  >
+                    <Trash2 className="h-4 w-4"  color="white"/>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -370,7 +365,7 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
       </div>
 
       {/* Advanced Settings (only for dynamic projects) */}
-      {projectType === "dynamic" && (
+      {!isStatic && (
         <div className="bg-[#0a2a3f] rounded-lg overflow-hidden">
           <div className="p-4 border-b border-gray-700">
             <button
@@ -399,7 +394,7 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
                     Access during builds and at runtime from your app's root, or from /etc/secrets/filename
                   </p>
 
-                  <div className="flex gap-2 mb-2">
+                  <div className="flex flex-wrap gap-2 mb-2">
                     <button className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm">
                       No names added
                     </button>
@@ -408,13 +403,13 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
                     </button>
                   </div>
 
-                  <div className="flex gap-2 items-center">
+                  <div className="flex flex-col sm:flex-row gap-2 items-center">
                     <input
                       type="text"
                       placeholder="Enter secret file name"
-                      className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
+                      className="w-full sm:flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white"
                     />
-                    <button className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm">
+                    <button className="w-full sm:w-auto px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm">
                       Add file
                     </button>
                   </div>
@@ -429,7 +424,7 @@ export function ProjectSettings({ project }: ProjectSettingsProps) {
                     Health check path
                   </h3>
                   <p className="text-sm text-gray-400 mb-2">
-                    Files containing secret data (such as a .env file or a private key).
+                    Store sensitive files containing secret data (such as a .env file or a private key).
                     <br />
                     Access during builds and at runtime from your app's root, or from /etc/secrets/filename
                   </p>
